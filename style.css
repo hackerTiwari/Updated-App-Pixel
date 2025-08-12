@@ -235,7 +235,7 @@ img{ max-width:100%; display:block }
 .meta{ color:#94A3B8; font-size:13px }
 .card .controls{ margin-top:auto; }
 
-/* Tags wrap */
+/* Card tags wrap */
 .card .tags{ display:flex; flex-wrap:wrap; gap:8px; row-gap:6px; }
 
 /* Chips */
@@ -406,7 +406,7 @@ img{ max-width:100%; display:block }
   box-shadow:0 8px 22px rgba(37,99,235,.22);
 }
 
-/* Stars */
+/* Stars with partial fill */
 .rating{ display:inline-flex; align-items:center; gap:6px }
 .rating .stars{ position:relative; width:90px; height:18px; display:inline-block }
 .rating .row{ position:absolute; inset:0; display:grid; grid-template-columns:repeat(5,1fr); gap:2px }
