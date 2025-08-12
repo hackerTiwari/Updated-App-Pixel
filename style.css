@@ -235,7 +235,7 @@ img{ max-width:100%; display:block }
 .meta{ color:#94A3B8; font-size:13px }
 .card .controls{ margin-top:auto; }
 
-/* Card tags wrap */
+/* Tags wrap */
 .card .tags{ display:flex; flex-wrap:wrap; gap:8px; row-gap:6px; }
 
 /* Chips */
@@ -260,9 +260,9 @@ img{ max-width:100%; display:block }
   box-shadow:0 10px 26px rgba(37,99,235,.24);
 }
 .btn.primary::after{
-  content:""; position:absolute; inset:0 -40% 0 auto; width:30%; transform:skewX(-18deg) translateX(-120%);
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
-  transition:transform .6s ease; mix-blend:soft-light;
+  content:""; position:absolute; inset:0; /* full but light overlay */
+  background:linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,0));
+  opacity:.25; pointer-events:none; mix-blend:normal; transform:none;
 }
 .btn.primary:hover::after{ transform:skewX(-18deg) translateX(260%) }
 .btn.ghost{ background:var(--surface) }
@@ -406,7 +406,7 @@ img{ max-width:100%; display:block }
   box-shadow:0 8px 22px rgba(37,99,235,.22);
 }
 
-/* Stars with partial fill */
+/* Stars */
 .rating{ display:inline-flex; align-items:center; gap:6px }
 .rating .stars{ position:relative; width:90px; height:18px; display:inline-block }
 .rating .row{ position:absolute; inset:0; display:grid; grid-template-columns:repeat(5,1fr); gap:2px }
@@ -423,4 +423,23 @@ img{ max-width:100%; display:block }
   .card{ padding:10px }
   .card-header{ align-items:flex-start }
   .app-title{ line-height:1.25 }
+}
+
+/* Hotfix: Download button text invisible (mobile Chrome blend-mode bug) */
+.controls .btn, .btn{
+  display:inline-flex; align-items:center; justify-content:center; /* ensure text visible and centered */
+}
+
+/* Force readable label on gradient button */
+.btn.primary{
+  color:#fff !important; position:relative; isolation:isolate;
+}
+
+/* Remove shiny overlay that hides text on some devices */
+.btn.primary::after{
+  content:none !important;
+}
+
+@media (max-width:640px){
+  .controls .btn{ flex:1 1 48%; min-width:48%; }
 }
