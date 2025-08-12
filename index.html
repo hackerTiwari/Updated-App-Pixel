@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#2563EB" />
+    <meta name="description" content="App‑Pixel • Explore trusted APKs with a clean, modern interface. Verified links, realtime updates, and a smooth download experience." />
+    <title>App‑Pixel • Explore Trusted APKs</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#view">Skip to content</a>
+
+    <!-- Top Header -->
+    <header class="topbar" role="banner">
+      <div class="logo" id="goHome" aria-label="Go to Home" role="link" tabindex="0">
+        <div class="pixelP" aria-hidden="true">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+        <div class="brand"><strong>App‑Pixel</strong></div>
+      </div>
+      <div class="top-actions">
+        <button id="btnSearch" class="icon-btn" title="Search (Ctrl+K)">🔎</button>
+        <button id="btnSkin" class="icon-btn" title="Change colors">🎨</button>
+        <button id="btnTheme" class="icon-btn" title="Toggle theme">🌙</button>
+        <button id="btnMenu" class="icon-btn" title="Menu">☰</button>
+      </div>
+    </header>
+
+    <!-- Network status -->
+    <div id="netStatus" class="net-status hidden" role="status" aria-live="polite"></div>
+
+    <!-- Side Drawer -->
+    <aside id="drawer" class="drawer" aria-hidden="true" aria-label="Side menu">
+      <div class="drawer-header">
+        <div class="avatar" id="drawerAvatar" title="Avatar" aria-hidden="true">A</div>
+        <div class="user-meta">
+          <div id="drawerName">Guest</div>
+          <small id="drawerEmail">guest@example.com</small>
+        </div>
+        <button id="btnDrawerClose" class="icon-btn" aria-label="Close menu">✕</button>
+      </div>
+      <nav class="drawer-nav" role="navigation" aria-label="Primary">
+        <a href="#/profile">👤 Profile</a>
+        <a href="#/history">⬇️ Download History</a>
+        <a href="#/admin">🛠️ Admin Panel</a>
+        <a href="#/about">ℹ️ About</a>
+      </nav>
+      <div class="drawer-footer">
+        <small>© <span id="year"></span> App‑Pixel</small>
+      </div>
+    </aside>
+
+    <!-- Overlay -->
+    <div id="overlay" class="overlay" aria-hidden="true"></div>
+
+    <!-- Search overlay -->
+    <div id="searchOverlay" class="search-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Search">
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Search apps, categories..." aria-label="Search apps" />
+        <button id="searchClose" class="icon-btn" aria-label="Close search">✕</button>
+      </div>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+
+    <!-- Main content -->
+    <main id="view" class="view" role="main"></main>
+
+    <!-- Footer -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="foot-inner">
+        <div class="foot-meta">© <span id="yearFoot"></span> App‑Pixel • All rights reserved.</div>
+        <div class="foot-links" aria-label="Footer links">
+          <a href="#/home">Home</a>
+          <span aria-hidden="true">•</span>
+          <a href="#/about">About</a>
+          <span aria-hidden="true">•</span>
+          <a href="#/history">History</a>
+          <span aria-hidden="true">•</span>
+          <a href="#/admin">Admin</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <!-- Image Viewer (Lightbox) -->
+    <div id="imgViewer" class="img-viewer" aria-hidden="true" aria-label="Image viewer">
+      <button class="iv-btn iv-close" id="ivClose" aria-label="Close">✕</button>
+      <button class="iv-btn iv-prev" id="ivPrev" aria-label="Previous">‹</button>
+      <img id="ivImg" alt="preview">
+      <button class="iv-btn iv-next" id="ivNext" aria-label="Next">›</button>
+      <a class="iv-btn iv-open" id="ivOpen" target="_blank" rel="noopener" aria-label="Open in new tab">↗</a>
+    </div>
+
+    <noscript>
+      <div style="padding:12px; text-align:center; background:#fee2e2; color:#991b1b;">
+        This app requires JavaScript for full functionality.
+      </div>
+    </noscript>
+
+    <!-- App JS -->
+    <script type="module" src="./app.firebase.js"></script>
+  </body>
+</html>
