@@ -1,5 +1,10 @@
-/* ——— App‑Pixel • Robust Responsive CSS (Mobile/Desktop) ——— */
-/* Fixes: no horizontal overflow, no cut cards, compact chips/badges, safe buttons */
+/* ——— App‑Pixel • Mobile/Desktop Responsive CSS (final fixes) ——— */
+/* Goals:
+   - No horizontal scroll anywhere
+   - Hero category scroller shows ALL chips (no clipping)
+   - App cards never cut/overlap (buttons safe)
+   - Chips/badges compact (no giant ovals)
+*/
 
 :root{
   color-scheme: light;
@@ -8,7 +13,7 @@
   --primary:#2563EB;
   --accent:#22C55E;
 
-  /* Light surfaces */
+  /* Light surfaces (switch to dark by adding [data-theme="dark"] on <html>) */
   --bg:#F8FAFC;
   --surface:#FFFFFF;
   --surface-ghost:rgba(255,255,255,.78);
@@ -33,11 +38,11 @@
 
   --a:.25s cubic-bezier(.22,.61,.36,1);
 
-  /* Grid min column width (fluid) */
+  /* Fluid column min width (grid) */
   --col-min: clamp(200px, 44vw, 260px);
 }
 
-/* Dark theme */
+/* Dark theme (optional) */
 [data-theme="dark"]{
   color-scheme: dark;
   --bg:#0B1220;
@@ -52,7 +57,7 @@
   --shadow-sm:0 4px 12px rgba(2,6,23,.45), 0 1px 2px rgba(2,6,23,.35);
 }
 
-/* Skins (optional) */
+/* Skins */
 [data-skin="nebula"]{}
 [data-skin="sunset"]{ --primary:#F43F5E; --accent:#F59E0B; --ring:#FDA4AF; }
 [data-skin="mint"]{ --primary:#10B981; --accent:#06B6D4; --ring:#86EFAC; }
@@ -61,7 +66,7 @@
 *{ box-sizing:border-box }
 html,body{ height:100% }
 
-/* Important: remove horizontal scroll everywhere */
+/* 1) Page must never scroll horizontally */
 html,body{
   width:100%;
   max-width:100%;
@@ -76,13 +81,14 @@ body{
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   -webkit-tap-highlight-color:transparent; touch-action:manipulation;
 }
-strong,.brand{ font-family:Poppins,Inter,system-ui }
-img{ max-width:100%; height:auto; display:block }
 
-/* Long text wrap (avoid pushing width) */
+/* Wrap long strings everywhere to avoid width push */
 h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
   overflow-wrap:anywhere; word-break:break-word;
 }
+
+strong,.brand{ font-family:Poppins,Inter,system-ui }
+img{ max-width:100%; height:auto; display:block }
 
 /* Focus */
 :where(button,a,input,select,textarea):focus-visible{
@@ -112,7 +118,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 }
 .icon-btn:hover{ transform:translateY(-1px); border-color:#cbd5e1 }
 
-/* Network status */
+/* Network banner */
 .net-status{
   position:sticky; top:0; z-index:35;
   margin:0; padding:8px 14px;
@@ -165,10 +171,10 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 .search-result:hover{ transform:translateY(-1px); border-color:rgba(96,165,250,.4) }
 .search-overlay .no-results{ min-height:calc(100vh - 120px); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; color:#94A3B8; text-align:center; }
 
-/* View container */
+/* View */
 .view{ flex:1; max-width:1240px; margin:0 auto; padding: clamp(12px, 2.6vw, 24px); position:relative; z-index:1; }
 
-/* Sections */
+/* Section */
 .section{ margin-top:16px }
 .section h2{ margin:0 0 8px; font-size: clamp(18px, 1.2vw + .9rem, 22px) }
 
@@ -181,16 +187,19 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 }
 .hero .muted{ color:var(--text-dim); font-size: clamp(13px, .4vw + .8rem, 15px) }
 
-/* Hero tags scroller (page width safe) */
+/* 2) Hero categories scroller — show ALL chips (no masking, no clipping) */
 .hero .tags{
-  display:flex; gap:8px; flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden;
-  -webkit-overflow-scrolling: touch; scrollbar-width:none; scroll-snap-type:x proximity;
-  width:100%; padding-bottom:4px;
+  display:flex; gap:8px; flex-wrap:nowrap;
+  overflow-x:auto; overflow-y:hidden; /* horizontal scroll only inside */
+  -webkit-overflow-scrolling: touch; scrollbar-width:none;
+  width:100%; max-width:100%;
+  padding:4px 8px 6px 0;
+  mask-image:none !important; -webkit-mask-image:none !important; /* nothing hides last chips */
 }
 .hero .tags::-webkit-scrollbar{ display:none; }
 .hero .tags .chip{ scroll-snap-align:start; }
 
-/* Grid */
+/* Grid (cards/categories) */
 .grid{
   display:grid;
   gap: clamp(12px, 2.4vw, 20px);
@@ -201,41 +210,48 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 @media (min-width:1024px){ :root{ --col-min: 260px; } }
 @media (min-width:1440px){ :root{ --col-min: 280px; } }
 
-/* Card */
+/* Card — never cut: overflow hidden and safe internals */
 .card{
+  position:relative;
   background:var(--surface);
   border:1px solid var(--border);
   border-radius:var(--radius-card);
-  padding:12px; box-shadow:var(--shadow-sm);
+  padding:12px;
+  box-shadow:var(--shadow-sm);
   display:flex; flex-direction:column; gap:10px; height:100%;
   transition:transform var(--a), box-shadow var(--a), border-color var(--a), background var(--a);
-  overflow:hidden; /* critical: prevent button bleed & cuts */
+  overflow:hidden;                /* prevents any child bleed */
 }
-.card:hover{ transform:translateY(-2px); border-color:#2e3a57; box-shadow:0 14px 34px rgba(2,6,23,.35) }
+.card:hover{ transform:translateY(-2px); border-color:color-mix(in oklab, var(--primary) 24%, var(--border)); box-shadow:0 14px 34px rgba(2,6,23,.10) }
 .card-header{ display:flex; gap:10px; align-items:center }
 .app-icon{ width:56px; height:56px; border-radius:14px; object-fit:cover; border:1px solid var(--border) }
 
-/* Titles */
+/* Title/meta */
 .app-title{ font-weight:700; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 @media (min-width:768px){ .app-title{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis } }
 .meta{ color:#94A3B8; font-size:13px }
 .card .controls{ margin-top:auto; }
 
-/* Tags inside card */
+/* Tags in card */
 .card .tags{ display:flex; flex-wrap:wrap; gap:8px; row-gap:6px; }
 
-/* Compact chips (fix big ovals) */
+/* Compact chips (no giant ovals) */
 .chip{
   display:inline-flex; align-items:center; justify-content:center;
   border:1px solid var(--border);
   padding:6px 10px; border-radius:var(--radius-pill);
-  min-height:28px; line-height:1; font-size:12px;
-  background:var(--surface); color:var(--text); white-space:nowrap;
+  min-height:28px; height:auto; line-height:1;
+  font-size:12px; background:var(--surface); color:var(--text);
+  white-space:nowrap;
   transition:all var(--a);
 }
-.chip.on,.chip.active{ color:#fff; border-color:transparent; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 6px 18px rgba(37,99,235,.25) }
+.chip.on,.chip.active{
+  color:#fff; border-color:transparent;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  box-shadow:0 6px 18px rgba(37,99,235,.18);
+}
 
-/* Verified badge compact */
+/* Badges compact */
 .badge{
   display:inline-flex; align-items:center; gap:6px;
   padding:5px 8px; border-radius:var(--radius-pill);
@@ -245,15 +261,18 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
              linear-gradient(135deg, var(--primary), var(--accent)) border-box;
 }
 .badge .i{ width:14px; height:14px; display:inline-block }
-.badge-verify{ color:#fff; border:none; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 6px 18px rgba(37,99,235,.25); }
+.badge-verify{
+  color:#fff; border:none; background:linear-gradient(135deg,var(--primary),var(--accent));
+  box-shadow:0 6px 18px rgba(37,99,235,.22);
+}
 
-/* Buttons — grid layout avoids overflow/cut */
+/* 3) Buttons — grid layout prevents cut/overlap; full-width cells */
 .controls{
   display:grid; grid-template-columns: repeat(2, minmax(0, 1fr));
   gap:8px; align-items:center;
 }
 .btn{
-  width:100%; box-sizing:border-box;
+  width:100%; min-width:0; box-sizing:border-box;
   height:44px; min-height:44px; border-radius:12px; padding:0 14px; border:1px solid var(--border);
   background:var(--surface); cursor:pointer; font-weight:700;
   transition:transform var(--a), box-shadow var(--a), background var(--a), border-color var(--a), color var(--a);
@@ -267,12 +286,12 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
   box-shadow:0 10px 26px rgba(37,99,235,.24);
   position:relative; isolation:isolate;
 }
-/* Remove shiny overlay (fixes Android label hiding/bleed) */
+/* Remove shiny overlay that causes Android text/bleed bugs */
 .btn.primary::after{ content:none; }
 .btn.ghost{ background:var(--surface) }
 
-/* On small phones stack buttons (one per row) */
-@media (max-width:560px){
+/* Small phones: stack buttons to 1 per row (extra safe) */
+@media (max-width:680px){
   .controls{ grid-template-columns: 1fr; }
 }
 
@@ -283,7 +302,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 
 /* Detail page */
 .detail-head{ display:flex; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px; box-shadow:var(--shadow); }
-.detail-meta{ display:flex; gap:10px; flex-wrap:wrap; color:#B6C0CF; font-size:14px }
+.detail-meta{ display:flex; gap:10px; flex-wrap:wrap; color:var(--text-dim); font-size:14px }
 .screens{ display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:10px }
 .screens img{ width:100%; border-radius:12px; border:1px solid var(--border); object-fit:cover }
 .zoomable{ cursor:zoom-in }
@@ -366,7 +385,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 .rating .fg{ color:var(--primary); overflow:hidden; filter: drop-shadow(0 2px 6px rgba(37,99,235,.22)) }
 .rating .score{ font-weight:700; color:var(--text) }
 
-/* Small phones */
+/* Small phones fine-tune */
 @media (max-width:480px){
   .grid{ gap:12px }
   .card{ padding:10px }
