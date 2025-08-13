@@ -1,11 +1,11 @@
-/* ——— App‑Pixel • Final Responsive CSS (mobile/desktop) ———
-   Fixes:
-   1) No horizontal scroll anywhere
-   2) Hero category chips fully scrollable (no clipping/mask)
-   3) App cards never cut/overlap (safe buttons + overflow handling)
-   4) Chips/Badges compact (no giant ovals)
-   5) Remove shiny overlay that hid Download text on Android
-   6) Hide accidental empty buttons (which created blank pills)
+/* ——— App‑Pixel • Final Mobile/Desktop CSS ———
+   Fixes from screenshot:
+   • No horizontal scroll anywhere
+   • Hero category chips fully scrollable (no clipping/fade/mask)
+   • App cards never cut/overlap (buttons safe, no bleed)
+   • Chips/Badges compact (no giant ovals)
+   • “Skip to content” hidden
+   • Download button shine removed (Android text/bleed bug)
 */
 
 :root{
@@ -40,7 +40,7 @@
 
   --a:.25s cubic-bezier(.22,.61,.36,1);
 
-  /* Grid min col size (fluid) */
+  /* Fluid grid min column width */
   --col-min: clamp(200px, 44vw, 260px);
 }
 
@@ -59,7 +59,7 @@
   --shadow-sm:0 4px 12px rgba(2,6,23,.45), 0 1px 2px rgba(2,6,23,.35);
 }
 
-/* Optional skins */
+/* Skins */
 [data-skin="nebula"]{}
 [data-skin="sunset"]{ --primary:#F43F5E; --accent:#F59E0B; --ring:#FDA4AF; }
 [data-skin="mint"]{ --primary:#10B981; --accent:#06B6D4; --ring:#86EFAC; }
@@ -68,7 +68,7 @@
 *{ box-sizing:border-box }
 html,body{ height:100% }
 
-/* 1) Never allow horizontal scrolling */
+/* 1) Never allow horizontal scroll */
 html,body{
   width:100%;
   max-width:100%;
@@ -83,14 +83,16 @@ body{
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   -webkit-tap-highlight-color:transparent; touch-action:manipulation;
 }
-
 strong,.brand{ font-family:Poppins,Inter,system-ui }
 img{ max-width:100%; height:auto; display:block }
 
-/* 1.1) Wrap long strings so they don’t push width */
+/* 1.1) Long text must wrap (avoid pushing width) */
 h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
   overflow-wrap:anywhere; word-break:break-word;
 }
+
+/* Hide “Skip to content” visibly (requested) */
+.skip-link{ display:none !important; }
 
 /* Focus */
 :where(button,a,input,select,textarea):focus-visible{
@@ -120,7 +122,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 }
 .icon-btn:hover{ transform:translateY(-1px); border-color:#cbd5e1 }
 
-/* Network status */
+/* Network banner */
 .net-status{
   position:sticky; top:0; z-index:35;
   margin:0; padding:8px 14px;
@@ -153,7 +155,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.25); opacity:0; visibility:hidden; transition:opacity var(--a); z-index:25; pointer-events:none; }
 .overlay.show{ opacity:1; visibility:visible; pointer-events:auto }
 
-/* Search */
+/* Search overlay */
 .search-overlay{
   position:fixed; inset:0; background:rgba(248,250,252,.92);
   backdrop-filter:saturate(160%) blur(6px);
@@ -173,7 +175,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 .search-result:hover{ transform:translateY(-1px); border-color:rgba(96,165,250,.4) }
 .search-overlay .no-results{ min-height:calc(100vh - 120px); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; color:#94A3B8; text-align:center; }
 
-/* View container */
+/* View wrapper */
 .view{ flex:1; max-width:1240px; margin:0 auto; padding: clamp(12px, 2.6vw, 24px); position:relative; z-index:1; }
 
 /* Sections */
@@ -189,14 +191,14 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 }
 .hero .muted{ color:var(--text-dim); font-size: clamp(13px, .4vw + .8rem, 15px) }
 
-/* 2) Hero categories scroller — show ALL (no masking/clipping) */
+/* 2) Hero categories scroller — show ALL chips (no mask/fade) */
 .hero .tags{
   display:flex; gap:8px; flex-wrap:nowrap;
   overflow-x:auto; overflow-y:hidden;
   -webkit-overflow-scrolling:touch; scrollbar-width:none;
   overscroll-behavior-x:contain;
   width:100%; max-width:100%;
-  padding:4px 12px 6px 0;
+  padding:4px 12px 6px 0; /* keep last chip visible */
   mask-image:none !important; -webkit-mask-image:none !important;
 }
 .hero .tags::-webkit-scrollbar{ display:none; }
@@ -213,7 +215,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 @media (min-width:1024px){ :root{ --col-min: 260px; } }
 @media (min-width:1440px){ :root{ --col-min: 280px; } }
 
-/* Card — NEVER CLIP */
+/* Card — NEVER CUT/OVERLAP */
 .card{
   position:relative;
   background:var(--surface);
@@ -223,7 +225,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
   box-shadow:var(--shadow-sm);
   display:flex; flex-direction:column; gap:10px; height:100%;
   transition:transform var(--a), box-shadow var(--a), border-color var(--a), background var(--a);
-  overflow:hidden;             /* key fix: nothing bleeds out */
+  overflow:hidden; /* critical fix */
 }
 .card:hover{ transform:translateY(-2px); border-color:color-mix(in oklab, var(--primary) 24%, var(--border)); box-shadow:0 14px 34px rgba(2,6,23,.10) }
 .card-header{ display:flex; gap:10px; align-items:center }
@@ -235,7 +237,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 .meta{ color:#94A3B8; font-size:13px }
 .card .controls{ margin-top:auto; }
 
-/* Tags wrap */
+/* Tags in card */
 .card .tags{ display:flex; flex-wrap:wrap; gap:8px; row-gap:6px; }
 
 /* Compact chips */
@@ -262,15 +264,9 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 .badge-verify{ color:#fff; border:none; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 6px 18px rgba(37,99,235,.22); }
 
 /* 3) Buttons — safe layout (no overflow), auto 2‑col then 1‑col on small */
-.controls{
-  display:flex; flex-wrap:wrap; gap:8px; align-items:center;
-}
-.controls .btn{
-  flex:1 1 calc(50% - 4px); min-width: calc(50% - 4px);
-}
-@media (max-width:680px){
-  .controls .btn{ flex-basis:100%; min-width:100%; }
-}
+.controls{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.controls .btn{ flex:1 1 calc(50% - 4px); min-width: calc(50% - 4px); }
+@media (max-width:680px){ .controls .btn{ flex-basis:100%; min-width:100%; } }
 
 /* Buttons base */
 .btn{
@@ -289,11 +285,11 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
   box-shadow:0 10px 26px rgba(37,99,235,.24);
   isolation:isolate;
 }
-/* Remove shiny overlay that caused label/bleed issues */
+/* Remove shiny overlay (fix “Download” label/bleed on Android) */
 .btn.primary::after{ content:none; }
 .btn.ghost{ background:var(--surface) }
 
-/* Hide accidental empty buttons (avoids blank dark pills) */
+/* Hide accidental empty buttons (blank pill issue) */
 button:empty, .btn:empty{ display:none !important; }
 
 /* Inputs */
@@ -338,7 +334,7 @@ button:empty, .btn:empty{ display:none !important; }
 [data-theme="dark"] .toast{ background:#020617 }
 .toast.show{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0) }
 
-/* Sticky CTA (mobile) */
+/* Sticky CTA */
 .sticky-cta{
   position:fixed; left: calc(12px + env(safe-area-inset-left, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   z-index:50; background:var(--surface-ghost); backdrop-filter:saturate(160%) blur(8px);
@@ -372,7 +368,7 @@ button:empty, .btn:empty{ display:none !important; }
 .site-footer a{ color:var(--text); text-decoration:none; border:1px solid transparent; padding:4px 8px; border-radius:8px; transition:background var(--a), border-color var(--a); }
 .site-footer a:hover{ background:rgba(148,163,184,.12); border-color:var(--border) }
 
-/* Stars with partial fill */
+/* Stars */
 .rating{ display:inline-flex; align-items:center; gap:6px }
 .rating .stars{ position:relative; width:90px; height:18px; display:inline-block }
 .rating .row{ position:absolute; inset:0; display:grid; grid-template-columns:repeat(5,1fr); gap:2px }
