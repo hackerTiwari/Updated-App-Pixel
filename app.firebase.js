@@ -378,67 +378,94 @@ function router(isSilent){
 }
 
 /* Home */
+// 1) Render all items (no slice(0,1)!) and rebind buttons
 function renderHome(){
   const el = document.querySelector("#view");
-  if(!el) return;
   if(!apps || apps.length === 0){
-    el.innerHTML = skeletonHomeHTML();
+    el.innerHTML = skeletonHomeHTML ? skeletonHomeHTML() : '<div class="muted">Loading…</div>';
     return;
   }
-  const trending = apps.slice().sort(function(a,b){ return (b.rating||0)-(a.rating||0); }).slice(0,8);
-  const updates = apps.slice().sort(function(a,b){ return (asMillis(b.updatedAt)) - (asMillis(a.updatedAt)); }).slice(0,8);
 
-  el.innerHTML = '\
-    <section class="section hero">\
-      <h1>Find trusted APKs faster</h1>\
-      <p class="muted">Explore, verify, and download</p>\
-      <div class="tags" style="margin-top:12px;overflow:auto;white-space:nowrap;padding-bottom:4px;">\
-        '+ CATEGORIES.map(function(c){return '<button class="chip" data-cat="'+c+'">'+c+'</button>';}).join('') +'\
-      </div>\
-    </section>\
-    <section class="section">\
-      <h2>Trending Apps</h2>\
-      <div class="grid" id="gridTrending">'+ (trending.map(appCard).join('') || '<div class="muted">No apps yet</div>') +'</div>\
-    </section>\
-    <section class="section">\
-      <h2>New Updates</h2>\
-      <div class="grid" id="gridUpdates">'+ (updates.map(appCard).join('') || '') +'</div>\
-    </section>\
-    <section class="section">\
-      <h2>Categories</h2>\
-      <div class="grid">'+ CATEGORIES.slice(0,12).map(categoryTile).join('') +'</div>\
-    </section>\
-  ';
+  // Show every published app (change logic if you need)
+  const all = apps.filter(a => a.published !== false);
 
-  bindHomeGridButtons();
+  const trending = all.slice().sort((a,b)=> (b.rating||0) - (a.rating||0));                  // ALL by rating desc
+  const updates  = all.slice().sort((a,b)=> asMillis(b.updatedAt) - asMillis(a.updatedAt));  // ALL by updatedAt desc
 
-  // Category chips filter
-  $$(".hero .chip").forEach(function(ch){
-    ch.addEventListener("click", function(){
-      const c = ch.getAttribute("data-cat");
-      $$(".hero .chip").forEach(function(x){ x.classList.remove("on"); });
-      ch.classList.add("on");
-      const filtered = apps.filter(function(a){ return a.category===c; });
-      const gt = $("#gridTrending");
-      const gu = $("#gridUpdates");
-      if(gt) gt.innerHTML = (filtered.slice(0,8).map(appCard).join('') || '<div class="muted">No apps in '+c+'</div>');
-      if(gu) gu.innerHTML = "";
-      bindHomeGridButtons();
-    });
+  el.innerHTML = `
+    <section class="section hero">
+      <h1>Find trusted APKs faster</h1>
+      <p class="muted">Explore, verify, and download</p>
+      <div class="tags" style="margin-top:12px;">
+        ${CATEGORIES.map(c=>`<button class="chip" data-cat="${c}">${c}</button>`).join('')}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Trending Apps</h2>
+      <div class="grid" id="gridTrending">
+        ${trending.map(appCard).join('') || `<div class="muted">No apps</div>`}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>New Updates</h2>
+      <div class="grid" id="gridUpdates">
+        ${updates.map(appCard).join('') || `<div class="muted">No apps</div>`}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Categories</h2>
+      <div class="grid">
+        ${CATEGORIES.map(c=>`
+          <div class="card" style="align-items:center;text-align:center;gap:8px;">
+            <div class="avatar" style="width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">${c.slice(0,1)}</div>
+            <div style="font-weight:600">${c}</div>
+            <button class="btn ghost cat-filter" data-filter-cat="${c}">Explore</button>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  `;
+
+  // Buttons behaviour
+  document.querySelectorAll(".card .btn.details").forEach(btn=>{
+    btn.addEventListener("click", e => location.hash = `#/app/${e.currentTarget.dataset.id}`);
   });
-
-  // Category tiles Explore buttons
-  $$(".cat-filter").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      openSearch();
-      const sin = $("#searchInput");
-      if(sin){
-        sin.value = btn.getAttribute("data-filter-cat");
-        handleSearch();
+  document.querySelectorAll(".card .btn.download").forEach(btn=>{
+    btn.addEventListener("click", e => location.hash = `#/download/${e.currentTarget.dataset.id}/step/1`);
+  });
+  document.querySelectorAll(".cat-filter").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(typeof openSearch === 'function'){
+        openSearch();
+        const sin = document.querySelector("#searchInput");
+        if(sin){ sin.value = btn.getAttribute("data-filter-cat"); if(typeof handleSearch === 'function') handleSearch(); }
       }
     });
   });
+
+  // Hero category filter chips
+  document.querySelectorAll(".hero .chip").forEach(ch=>{
+    ch.addEventListener("click", ()=>{
+      const c = ch.getAttribute("data-cat");
+      document.querySelectorAll(".hero .chip").forEach(x=>x.classList.remove("on"));
+      ch.classList.add("on");
+      const filtered = all.filter(a=>a.category===c);
+      document.querySelector("#gridTrending").innerHTML = filtered.map(appCard).join('') || `<div class="muted">No apps in ${c}</div>`;
+      document.querySelector("#gridUpdates").innerHTML = "";
+      // rebind for filtered
+      document.querySelectorAll(".card .btn.details").forEach(btn=>{
+        btn.addEventListener("click", e => location.hash = `#/app/${e.currentTarget.dataset.id}`);
+      });
+      document.querySelectorAll(".card .btn.download").forEach(btn=>{
+        btn.addEventListener("click", e => location.hash = `#/download/${e.currentTarget.dataset.id}/step/1`);
+      });
+    });
+  });
 }
+
 function bindHomeGridButtons(){
   $$(".card .btn.details").forEach(function(btn){
     btn.addEventListener("click", function(e){ location.hash = '#/app/'+ e.currentTarget.getAttribute("data-id"); });
@@ -447,40 +474,49 @@ function bindHomeGridButtons(){
     btn.addEventListener("click", function(e){ location.hash = '#/download/'+ e.currentTarget.getAttribute("data-id") + '/step/1'; });
   });
 }
+// helper used below
 function asMillis(ts){
   if(!ts) return 0;
   if (typeof ts.toMillis === 'function') return ts.toMillis();
   if (typeof ts === 'object' && ts && typeof ts.seconds !== 'undefined') return ts.seconds*1000;
-  const n = new Date(ts).getTime();
-  return isNaN(n) ? 0 : n;
+  const n = new Date(ts).getTime(); return isNaN(n) ? 0 : n;
 }
 
+// 2) Safe card template (only two buttons, no empty element)
 function appCard(a){
-  return '\
-    <div class="card">\
-      <div class="card-header">\
-        <img class="app-icon" loading="lazy" decoding="async"\
-             src="'+(a.icon||'')+'" alt="'+(a.name||'App')+' icon"\
-             onerror="this.src=\'https://via.placeholder.com/96?text=App\'">\
-        <div>\
-          <div class="app-title">'+(a.name||'')+'</div>\
-          <div class="meta">\
-            '+ratingStars(a.rating||0)+'\
-            <span class="dot">•</span> '+(a.sizeMB||0)+' MB\
-            <span class="dot">•</span> '+(a.category||'')+'\
-          </div>\
-        </div>\
-      </div>\
-      <div class="tags">\
-        '+(a.verified ? VERIFIED_BADGE : '')+'\
-        '+((a.tags||[]).slice(0,2).map(function(t){ return '<span class="chip">'+t+'</span>'; }).join(''))+'\
-      </div>\
-      <div class="controls">\
-        <button class="btn ghost details" data-id="'+a.id+'">Details</button>\
-        <button class="btn primary download" data-id="'+a.id+'">Download</button>\
-      </div>\
-    </div>\
-  ';
+  return `
+    <div class="card">
+      <div class="card-header">
+        <img class="app-icon" loading="lazy" decoding="async"
+             src="${a.icon||''}" alt="${a.name||'App'} icon"
+             onerror="this.src='https://via.placeholder.com/96?text=App'">
+        <div>
+          <div class="app-title">${a.name||''}</div>
+          <div class="meta">
+            ${typeof ratingStars === 'function' ? ratingStars(a.rating||0) : `⭐ ${(a.rating||0).toFixed(1)}`}
+            <span class="dot">•</span> ${a.sizeMB||0} MB
+            <span class="dot">•</span> ${a.category||''}
+          </div>
+        </div>
+      </div>
+
+      <div class="tags">
+        ${a.verified ? `
+          <span class="badge badge-verify" title="Verified">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 2 3 7v6c0 5 5 9 9 9s9-4 9-9V7l-9-5zm-1 13.2-3.2-3.2 1.4-1.4L11 12.6l4.8-4.8 1.4 1.4L11 15.2z"/>
+            </svg>
+            Verified
+          </span>` : ``}
+        ${(a.tags||[]).slice(0,3).map(t=>`<span class="chip">${t}</span>`).join('')}
+      </div>
+
+      <div class="controls">
+        <button class="btn ghost details" data-id="${a.id}">Details</button>
+        <button class="btn primary download" data-id="${a.id}">Download</button>
+      </div>
+    </div>
+  `;
 }
 
 function categoryTile(c){
@@ -1131,3 +1167,4 @@ function bindNetworkStatus(){
   window.addEventListener('offline', function(){ show('You are offline'); });
   if(!navigator.onLine){ show('You are offline'); }
 }
+
