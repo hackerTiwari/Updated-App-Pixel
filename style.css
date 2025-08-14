@@ -3,51 +3,32 @@
 /* Theme */
 :root{
   color-scheme: light;
+  --primary:#2563EB; --accent:#22C55E;
 
-  --primary:#2563EB;
-  --accent:#22C55E;
+  --bg:#F8FAFC; --surface:#FFFFFF; --surface-ghost:rgba(255,255,255,.78);
+  --text:#0F172A; --text-dim:#475569; --border:#E2E8F0; --ring:#93C5FD;
 
-  --bg:#F8FAFC;
-  --surface:#FFFFFF;
-  --surface-ghost:rgba(255,255,255,.78);
-  --text:#0F172A;
-  --text-dim:#475569;
-  --border:#E2E8F0;
-  --ring:#93C5FD;
-
-  --warning:#F59E0B;
-  --success:#16A34A;
-  --error:#EF4444;
+  --warning:#F59E0B; --success:#16A34A; --error:#EF4444;
 
   --shadow:0 10px 26px rgba(2,6,23,.06), 0 2px 6px rgba(2,6,23,.04);
   --shadow-sm:0 3px 10px rgba(2,6,23,.05), 0 1px 2px rgba(2,6,23,.04);
 
-  --radius-card:14px;
-  --radius-input:12px;
-  --radius-pill:999px;
-
+  --radius-card:14px; --radius-input:12px; --radius-pill:999px;
   --a:.25s cubic-bezier(.22,.61,.36,1);
 
-  /* Grid min col width (fluid) */
-  --col-min: clamp(200px, 44vw, 260px);
+  --col-min: clamp(200px, 44vw, 260px); /* grid min col */
 }
 
-/* Optional dark theme */
+/* Dark (optional) */
 [data-theme="dark"]{
   color-scheme: dark;
-  --bg:#0B1220;
-  --surface:#0F172A;
-  --surface-ghost:rgba(15,23,42,.70);
-  --text:#E5E7EB;
-  --text-dim:#B6C0CF;
-  --border:#223048;
-  --ring:#60A5FA;
-
+  --bg:#0B1220; --surface:#0F172A; --surface-ghost:rgba(15,23,42,.70);
+  --text:#E5E7EB; --text-dim:#B6C0CF; --border:#223048; --ring:#60A5FA;
   --shadow:0 12px 28px rgba(2,6,23,.55), 0 3px 8px rgba(2,6,23,.35);
   --shadow-sm:0 4px 12px rgba(2,6,23,.45), 0 1px 2px rgba(2,6,23,.35);
 }
 
-/* Skins (optional) */
+/* Skins */
 [data-skin="nebula"]{}
 [data-skin="sunset"]{ --primary:#F43F5E; --accent:#F59E0B; --ring:#FDA4AF; }
 [data-skin="mint"]{ --primary:#10B981; --accent:#06B6D4; --ring:#86EFAC; }
@@ -56,12 +37,12 @@
 *{ box-sizing:border-box }
 html,body{ height:100% }
 
-/* 1) Kill horizontal scroll globally (works for Desktop‑site mode too) */
+/* 1) Never allow horizontal scroll (even Desktop‑site) */
 html,body{
-  width:100%;
-  max-width:100%;
+  width:100%; max-width:100%;
   overflow-x:hidden;
   -webkit-text-size-adjust:100%;
+  touch-action:manipulation;
 }
 
 body{
@@ -69,17 +50,16 @@ body{
   background:var(--bg); color:var(--text);
   font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
 }
-strong,.brand{ font-family:Poppins,Inter,system-ui }
 img{ max-width:100%; height:auto; display:block }
+strong,.brand{ font-family:Poppins,Inter,system-ui }
 
-/* Wrap long strings so they don’t push width */
+/* Wrap long strings so width push na ho */
 h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
   overflow-wrap:anywhere; word-break:break-word;
 }
 
-/* Hide “Skip to content” */
+/* Skip link hide */
 .skip-link{ display:none !important; }
 
 /* Focus */
@@ -92,21 +72,19 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
   position:sticky; top:0; z-index:30;
   display:flex; align-items:center; justify-content:space-between;
   padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 10px;
-  background:var(--surface-ghost);
-  border-bottom:1px solid var(--border);
+  background:var(--surface-ghost); border-bottom:1px solid var(--border);
   backdrop-filter:saturate(160%) blur(10px);
 }
 .logo{ display:flex; align-items:center; gap:10px; cursor:pointer }
 .pixelP{ width:28px; height:28px; display:grid; grid-template-columns:repeat(3,1fr); gap:2px }
-.pixelP span{ display:block; width:100%; height:100%; border-radius:4px; background:linear-gradient(135deg,var(--primary),var(--accent)) }
+.pixelP span{ width:100%; height:100%; border-radius:4px; background:linear-gradient(135deg,var(--primary),var(--accent)) }
 .pixelP span:nth-child(4),.pixelP span:nth-child(7),.pixelP span:nth-child(8),.pixelP span:nth-child(9){ background:transparent }
 .brand{ font-weight:600 }
-.top-actions{ display:flex; align-items:center; gap:8px }
+.top-actions{ display:flex; gap:8px; align-items:center }
 .icon-btn{
   background:var(--surface); border:1px solid var(--border); border-radius:12px;
-  padding:8px 10px; cursor:pointer; font-size:16px; line-height:1;
+  padding:8px 10px; cursor:pointer; font-size:16px; line-height:1; box-shadow:var(--shadow-sm);
   transition:border-color var(--a), transform var(--a), background var(--a), color var(--a);
-  box-shadow:var(--shadow-sm);
 }
 .icon-btn:hover{ transform:translateY(-1px); border-color:#cbd5e1 }
 
@@ -145,10 +123,8 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 
 /* Search */
 .search-overlay{
-  position:fixed; inset:0; background:rgba(248,250,252,.92);
-  backdrop-filter:saturate(160%) blur(6px);
-  opacity:0; visibility:hidden; transition:opacity var(--a); z-index:35;
-  display:flex; flex-direction:column; pointer-events:none;
+  position:fixed; inset:0; background:rgba(248,250,252,.92); backdrop-filter:saturate(160%) blur(6px);
+  opacity:0; visibility:hidden; transition:opacity var(--a); z-index:35; display:flex; flex-direction:column; pointer-events:none;
 }
 [data-theme="dark"] .search-overlay{ background:rgba(2,6,23,.6) }
 .search-overlay.show{ opacity:1; visibility:visible; pointer-events:auto }
@@ -157,8 +133,8 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 .search-results{ padding:16px; display:grid; gap:10px; max-width:1000px; margin:0 auto; width:100% }
 .search-result{
   display:flex; align-items:center; gap:12px; padding:10px; border-radius:14px; background:var(--surface);
-  border:1px solid var(--border); cursor:pointer; transition:transform var(--a), border-color var(--a), background var(--a), box-shadow var(--a);
-  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border); cursor:pointer; box-shadow:var(--shadow-sm);
+  transition:transform var(--a), border-color var(--a), background var(--a), box-shadow var(--a);
 }
 .search-result:hover{ transform:translateY(-1px); border-color:rgba(96,165,250,.4) }
 .search-overlay .no-results{ min-height:calc(100vh - 120px); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; color:#94A3B8; text-align:center; }
@@ -179,7 +155,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 }
 .hero .muted{ color:var(--text-dim); font-size: clamp(13px, .4vw + .8rem, 15px) }
 
-/* 2) Hero category chips — scroll inside only, show all */
+/* 2) Hero chips — inside horizontal scroll only (no clipping) */
 .hero .tags{
   display:flex; gap:8px; flex-wrap:nowrap;
   overflow-x:auto; overflow-y:hidden;
@@ -202,20 +178,17 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 @media (min-width:1024px){ :root{ --col-min: 260px; } }
 @media (min-width:1440px){ :root{ --col-min: 280px; } }
 
-/* Card — never cut/overlap */
+/* Card — no more cutting/overlap */
 .card{
-  position:relative;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius-card);
-  padding:12px;
-  box-shadow:var(--shadow-sm);
+  position:relative; background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-card); padding:12px; box-shadow:var(--shadow-sm);
   display:flex; flex-direction:column; gap:10px; height:100%;
   transition:transform var(--a), box-shadow var(--a), border-color var(--a), background var(--a);
-  overflow:hidden; /* critical fix */
+  overflow:hidden;                     /* key fix: children can't bleed */
 }
 .card:hover{ transform:translateY(-2px); border-color:color-mix(in oklab, var(--primary) 24%, var(--border)); box-shadow:0 14px 34px rgba(2,6,23,.10) }
-.card-header{ display:flex; gap:10px; align-items:center }
+.card-header{ display:flex; gap:10px; align-items:center; min-width:0; }
+.card-header > div{ min-width:0; }
 .app-icon{ width:56px; height:56px; border-radius:14px; object-fit:cover; border:1px solid var(--border) }
 
 /* Titles/meta */
@@ -224,42 +197,28 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 .meta{ color:#94A3B8; font-size:13px }
 .card .controls{ margin-top:auto; }
 
-/* Tags area */
+/* Card tags */
 .card .tags{ display:flex; flex-wrap:wrap; gap:8px; row-gap:6px; }
 
 /* Compact chips/badges */
 .chip{
   display:inline-flex; align-items:center; justify-content:center;
-  border:1px solid var(--border);
-  padding:6px 10px; border-radius:var(--radius-pill);
-  min-height:28px; line-height:1; font-size:12px;
-  background:var(--surface); color:var(--text); white-space:nowrap;
-  transition:all var(--a);
+  border:1px solid var(--border); padding:6px 10px; border-radius:var(--radius-pill);
+  min-height:28px; line-height:1; font-size:12px; background:var(--surface); color:var(--text); white-space:nowrap; transition:all var(--a);
 }
-.chip.on,.chip.active{
-  color:#fff; border-color:transparent;
-  background:linear-gradient(135deg,var(--primary),var(--accent));
-  box-shadow:0 6px 18px rgba(37,99,235,.18)
-}
-.badge{
-  display:inline-flex; align-items:center; gap:6px;
-  padding:5px 8px; border-radius:var(--radius-pill);
-  font-size:11px; line-height:1;
-  border:1px solid transparent; color:var(--text);
-  background:linear-gradient(var(--surface), var(--surface)) padding-box,
-             linear-gradient(135deg, var(--primary), var(--accent)) border-box;
-}
+.chip.on,.chip.active{ color:#fff; border-color:transparent; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 6px 18px rgba(37,99,235,.18) }
+.badge{ display:inline-flex; align-items:center; gap:6px; padding:5px 8px; border-radius:var(--radius-pill); font-size:11px; line-height:1; border:1px solid transparent; color:var(--text); background:linear-gradient(var(--surface), var(--surface)) padding-box, linear-gradient(135deg, var(--primary), var(--accent)) border-box; }
 .badge .i{ width:14px; height:14px; display:inline-block }
 .badge-verify{ color:#fff; border:none; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 6px 18px rgba(37,99,235,.22) }
 
-/* 3) Buttons — safe layout (no overflow). Two per row, then 1 per row on small */
+/* 3) Buttons — safe: wrap + full width; stack on small */
 .controls{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
 .controls .btn{ flex:1 1 calc(50% - 4px); min-width: calc(50% - 4px); }
 @media (max-width:680px){ .controls .btn{ flex-basis:100%; min-width:100%; } }
 
-/* Buttons base */
+/* Button base */
 .btn{
-  box-sizing:border-box; width:100%;
+  width:100%; min-width:0; box-sizing:border-box;
   height:44px; min-height:44px; border-radius:12px; padding:0 14px; border:1px solid var(--border);
   background:var(--surface); cursor:pointer; font-weight:700;
   transition:transform var(--a), box-shadow var(--a), background var(--a), border-color var(--a), color var(--a);
@@ -268,16 +227,11 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 }
 .btn:hover{ transform:translateY(-1px) }
 .btn:active{ transform:translateY(0) scale(.98) }
-.btn.primary{
-  border:none; color:#fff; background:linear-gradient(135deg,var(--primary),var(--accent));
-  box-shadow:0 10px 26px rgba(37,99,235,.24);
-  isolation:isolate;
-}
-/* Remove shiny overlay causing Android bleed */
-.btn.primary::after{ content:none; }
+.btn.primary{ border:none; color:#fff; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow:0 10px 26px rgba(37,99,235,.24); isolation:isolate; }
+.btn.primary::after{ content:none; }       /* remove shiny overlay */
 .btn.ghost{ background:var(--surface) }
 
-/* Hide any accidental empty pills */
+/* Avoid accidental blank pills */
 .chip:empty, .btn:empty{ display:none !important; }
 
 /* Inputs */
