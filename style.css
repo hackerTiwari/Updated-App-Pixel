@@ -1,4 +1,4 @@
-/* App‑Pixel • Final CSS (no horizontal scroll, no cut cards) */
+/* App‑Pixel • Final CSS (fixed mobile cut + stable grid + thin scrollbar) */
 
 /* Theme */
 :root{
@@ -16,7 +16,8 @@
   --radius-card:14px; --radius-input:12px; --radius-pill:999px;
   --a:.25s cubic-bezier(.22,.61,.36,1);
 
-  --col-min: clamp(200px, 44vw, 260px);
+  /* Slightly smaller on tiny screens, more stable for grid */
+  --col-min: clamp(180px, 46vw, 260px);
 }
 
 /* Dark (optional) */
@@ -36,10 +37,10 @@
 *{ box-sizing:border-box }
 html,body{ height:100% }
 
-/* 1) Never allow horizontal scroll (even Desktop‑site) */
+/* Prevent accidental 1px spills without cutting content */
 html,body{
   width:100%; max-width:100%;
-  overflow-x:hidden;
+  overflow-x: clip; /* safer than hidden for modern browsers */
   -webkit-text-size-adjust:100%;
   touch-action:manipulation;
 }
@@ -132,6 +133,7 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 
 /* View */
 .view{ flex:1; max-width:1240px; margin:0 auto; padding: clamp(12px, 2.6vw, 24px); position:relative; z-index:1; }
+.view, .section, .grid{ min-width:0; } /* critical to prevent overflow */
 
 /* Sections */
 .section{ margin-top:16px }
@@ -146,23 +148,25 @@ h1,h2,h3,h4,h5,h6,p,small,span,div,a,button,.chip,.app-title,.meta{
 }
 .hero .muted{ color:var(--text-dim); font-size: clamp(13px, .4vw + .8rem, 15px) }
 
-/* 2) Hero chips – scroll inside only */
+/* Hero chips – scroll inside only */
 .hero .tags{
   display:flex; gap:8px; flex-wrap:nowrap;
   overflow-x:auto; overflow-y:hidden;
-  -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  -webkit-overflow-scrolling:touch; scrollbar-width:thin; /* was none */
   overscroll-behavior-x:contain; width:100%; max-width:100%;
-  padding:4px 12px 6px 0;
+  padding:4px 8px 6px 0; /* slightly reduced right padding */
   mask-image:none !important; -webkit-mask-image:none !important;
 }
-.hero .tags::-webkit-scrollbar{ display:none; }
+.hero .tags::-webkit-scrollbar{ height:6px; } /* thin hint instead of hidden */
+.hero .tags::-webkit-scrollbar-track{ background:transparent; }
+.hero .tags::-webkit-scrollbar-thumb{ background:rgba(148,163,184,.35); border-radius:999px; }
 .hero .tags .chip{ flex:0 0 auto; }
 
-/* Grid */
+/* Grid (stabler formula to avoid 1px overflow on mobile) */
 .grid{
   display:grid;
   gap: clamp(12px, 2.4vw, 20px);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--col-min)), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--col-min), 1fr));
   align-items: stretch;
 }
 @media (min-width:640px){ :root{ --col-min: 220px; } }
